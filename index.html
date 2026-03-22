@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scene of the Crime — FlagVault CTF</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;800;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#03080c;--surface:#070f18;--surface2:#0c1a28;--border:#164060;--border2:#164060;--accent:#00e8c8;--accent2:#ff2d6b;--accent3:#f5a623;--accent4:#7c3aed;--accent5:#3498db;--accent6:#ff003c;--text:#b8cdd9;--text-dim:#3d6070;--text-hi:#e8f4f8;--glow-c:rgba(0,232,200,0.35);--glow-r:rgba(255,45,107,0.35);--font-mono:'Share Tech Mono',monospace;--font-hud:'Orbitron',sans-serif;--font-body:'Exo 2',sans-serif;--radius:2px;--transition:0.22s cubic-bezier(0.4,0,0.2,1)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,232,200,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,232,200,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+h1,h2,h3{font-family:var(--font-hud);letter-spacing:1px;color:var(--text-hi)}
+p{font-family:var(--font-body);font-weight:300}
+a{color:var(--accent);text-decoration:none;transition:color var(--transition)}
+a:hover{color:var(--text-hi)}
+code,.mono{font-family:var(--font-mono);background:rgba(0,232,200,0.06);border:1px solid var(--border);padding:2px 6px;font-size:.88em;color:var(--accent)}
+.nav{position:sticky;top:0;z-index:500;background:rgba(3,8,12,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(14px);padding:0 2rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:var(--font-hud);font-size:1rem;font-weight:800;color:var(--text-hi);letter-spacing:3px;text-decoration:none;display:flex;align-items:center;gap:.6rem}
+.nav-brand .bracket{color:var(--accent)}.nav-brand .brand-flag{color:var(--accent2)}
+.nav-links{display:flex;align-items:center;gap:.25rem;list-style:none;flex-wrap:wrap}
+.nav-links a{color:var(--text-dim);font-family:var(--font-mono);font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;padding:.4rem .8rem;border:1px solid transparent;border-radius:var(--radius);transition:all var(--transition)}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);border-color:var(--border2);background:rgba(0,232,200,.05)}
+.nav-links a.active::before{content:'> '}
+.nav-status{display:flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.page-wrap{position:relative;z-index:1;max-width:1260px;margin:0 auto;padding:3rem 2rem 6rem}
+.page-header{margin-bottom:3rem;border-left:3px solid var(--accent);padding-left:1.5rem;position:relative}
+.page-header::before{content:attr(data-index);position:absolute;right:0;top:0;font-family:var(--font-hud);font-size:5rem;font-weight:900;color:rgba(0,232,200,.04);line-height:1;pointer-events:none}
+.page-eyebrow{font-family:var(--font-mono);font-size:.68rem;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:.5rem}
+.page-title{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--text-hi);line-height:1.1;margin-bottom:.8rem}
+.page-title .hl{color:var(--accent)}.page-title .hl2{color:var(--accent2)}
+.page-desc{font-size:.88rem;color:var(--text-dim);max-width:580px;font-family:var(--font-mono)}
+.sec-divider{display:flex;align-items:center;gap:1rem;margin:2.5rem 0 1.8rem}
+.sec-divider h3{font-size:.7rem;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;white-space:nowrap}
+.sec-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border2),transparent)}
+.sec-divider::before{content:'//';font-family:var(--font-mono);color:var(--accent);font-size:.8rem}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid}
+.tag-green{color:var(--accent);border-color:rgba(0,232,200,.3);background:rgba(0,232,200,.07)}
+.tag-red{color:var(--accent2);border-color:rgba(255,45,107,.3);background:rgba(255,45,107,.07)}
+.tag-amber{color:var(--accent3);border-color:rgba(245,166,35,.3);background:rgba(245,166,35,.07)}
+.tag-purple{color:#a78bfa;border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.07)}
+.hints-container{margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.6rem}
+.hint-item{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.hint-toggle{width:100%;text-align:left;background:var(--surface2);border:none;cursor:pointer;padding:.6rem 1rem;display:flex;align-items:center;gap:.6rem;font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);transition:background var(--transition),color var(--transition)}
+.hint-toggle:hover{background:rgba(245,166,35,.08);color:var(--accent3)}
+.hint-toggle .hint-num{background:rgba(245,166,35,.12);color:var(--accent3);border:1px solid rgba(245,166,35,.3);padding:1px 6px;font-size:.6rem;letter-spacing:1px}
+.hint-cost{margin-left:auto;color:var(--accent2);font-size:.65rem}
+.hint-content{display:none;padding:.8rem 1rem;font-family:var(--font-mono);font-size:.78rem;color:var(--accent3);background:rgba(245,166,35,.04);border-top:1px solid rgba(245,166,35,.15);line-height:1.8}
+.hint-item.revealed .hint-content{display:block;animation:slideDown .2s ease}
+.hint-item.revealed .hint-toggle{color:var(--accent3)}
+.flag-format{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:.9rem 1.2rem;font-family:var(--font-mono);font-size:.82rem;color:var(--text-dim);margin-bottom:1.5rem;display:flex;align-items:center;gap:.8rem}
+.flag-format .flag-icon{font-size:1rem}
+.flag-format strong{color:var(--accent2)}
+.submit-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-top:3rem;position:relative;overflow:hidden}
+.submit-section::before{content:'SUBMIT FLAG';position:absolute;right:1.5rem;top:1.5rem;font-family:var(--font-hud);font-size:3.5rem;font-weight:900;color:rgba(0,232,200,.03);pointer-events:none;line-height:1}
+.submit-title{font-family:var(--font-hud);font-size:1rem;color:var(--text-hi);margin-bottom:.4rem;display:flex;align-items:center;gap:.6rem}
+.submit-title::before{content:'⚑';color:var(--accent2)}
+.submit-sub{font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);margin-bottom:1.5rem}
+.form-control{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.7rem 1rem;font-family:var(--font-mono);font-size:.85rem;color:var(--text-hi);outline:none;transition:border-color var(--transition),box-shadow var(--transition);width:100%;appearance:none}
+.form-control::placeholder{color:var(--text-dim);font-size:.78rem}
+.form-control:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,232,200,.12),0 0 12px rgba(0,232,200,.08)}
+.flag-input-wrap{position:relative;margin-bottom:1.2rem}
+.flag-input-wrap .prefix{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-family:var(--font-mono);font-size:.78rem;color:var(--accent2);pointer-events:none;white-space:nowrap}
+.flag-input-wrap .form-control{padding-left:7.8rem;letter-spacing:1px}
+.btn{font-family:var(--font-hud);font-size:.72rem;letter-spacing:3px;text-transform:uppercase;padding:.8rem 2rem;border:none;border-radius:var(--radius);cursor:pointer;transition:all var(--transition);position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);transform:translateX(-100%);transition:transform .5s}
+.btn:hover::after{transform:translateX(100%)}
+.btn-primary{background:var(--accent);color:var(--bg);font-weight:600}
+.btn-primary:hover{background:#00fff0;box-shadow:0 0 20px var(--glow-c);transform:translateY(-1px)}
+.btn-danger{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+.btn-danger:hover{background:rgba(255,45,107,.1);box-shadow:0 0 12px var(--glow-r)}
+.submit-result{margin-top:1rem;padding:.75rem 1rem;border-radius:var(--radius);font-family:var(--font-mono);font-size:.8rem;display:none}
+.submit-result.correct{display:block;background:rgba(0,232,200,.08);border:1px solid rgba(0,232,200,.3);color:var(--accent)}
+.submit-result.incorrect{display:block;background:rgba(255,45,107,.08);border:1px solid rgba(255,45,107,.3);color:var(--accent2)}
+.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;transition:all var(--transition);position:relative;overflow:hidden}
+.tool-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--tool-color,var(--accent));transform:scaleX(0);transition:transform var(--transition)}
+.tool-card:hover{border-color:var(--border2);background:var(--surface2)}
+.tool-card:hover::before{transform:scaleX(1)}
+.tool-icon{font-size:1.4rem;margin-bottom:.6rem;display:block}
+.tool-name{font-family:var(--font-hud);font-size:.8rem;font-weight:600;color:var(--text-hi);margin-bottom:.3rem}
+.tool-tag{font-family:var(--font-mono);font-size:.62rem;letter-spacing:2px;color:var(--tool-color,var(--accent));text-transform:uppercase;margin-bottom:.5rem;display:block}
+.tool-desc{font-size:.75rem;color:var(--text-dim);font-family:var(--font-mono);line-height:1.6}
+.footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-brand{font-family:var(--font-hud);font-size:.75rem;color:var(--text-dim);letter-spacing:2px}
+.footer-brand span{color:var(--accent)}
+.footer-copy{font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shake{animation:shake .4s ease}
+@media(max-width:768px){.nav{padding:0 1rem}.nav-links{display:none}.page-wrap{padding:2rem 1rem 4rem}}
+@media(max-width:900px){.layout-2col{grid-template-columns:1fr !important}}
+/* CHALLENGE EXTRAS */
+.layout-2col{display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start}
+.sidebar{display:flex;flex-direction:column;gap:1.25rem}
+.side-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem}
+.side-card-title{font-family:var(--font-mono);font-size:.62rem;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.meta-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid rgba(22,64,96,.4);font-family:var(--font-mono);font-size:.76rem}
+.meta-row:last-child{border-bottom:none}
+.meta-key{color:var(--text-dim)}.meta-val{color:var(--text-hi)}
+.meta-val.green{color:var(--accent)}.meta-val.amber{color:var(--accent3)}
+.dl-btn{display:flex;align-items:center;gap:.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;text-decoration:none;transition:all var(--transition);cursor:pointer;color:inherit;margin-bottom:.75rem}
+.dl-btn:hover{border-color:var(--accent);background:rgba(0,232,200,.06);transform:translateX(3px);color:inherit}
+.dl-icon{font-size:1.5rem;flex-shrink:0}
+.dl-name{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);display:block;margin-bottom:.15rem}
+.dl-size{font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim)}
+.dl-arrow{margin-left:auto;color:var(--text-dim);font-size:.9rem;transition:transform var(--transition)}
+.dl-btn:hover .dl-arrow{transform:translateX(4px);color:var(--accent)}
+.desc-block{background:var(--surface2);border-left:3px solid var(--accent4);padding:1.2rem 1.4rem;font-family:var(--font-mono);font-size:.83rem;color:var(--text);line-height:1.85;margin-bottom:1.5rem;border-radius:0 var(--radius) var(--radius) 0}
+.desc-block p+p{margin-top:.75rem}
+.desc-block .hl{color:var(--accent)}.desc-block .hl2{color:var(--accent2)}.desc-block .hl3{color:var(--accent3)}
+.solve-bar-wrap{margin-top:.6rem}
+.solve-bar-label{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim);margin-bottom:.35rem}
+.solve-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.solve-bar-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.flag-submit-row{display:flex;gap:.75rem;align-items:flex-end;margin-top:0}
+.flag-submit-row .flag-input-wrap{flex:1;margin-bottom:0}
+.solved-banner{display:none;align-items:center;gap:1rem;background:rgba(0,232,200,.07);border:1px solid rgba(0,232,200,.3);border-radius:var(--radius);padding:1rem 1.4rem;margin-top:1rem;font-family:var(--font-mono);font-size:.82rem;color:var(--accent)}
+.solved-banner.show{display:flex;animation:fadeUp .4s ease}
+.solved-banner .sb-icon{font-size:1.4rem;flex-shrink:0}
+.solved-banner .sb-pts{margin-left:auto;font-family:var(--font-hud);font-size:1.1rem;font-weight:800;color:var(--accent3)}
+.terminal-emu{background:#010810;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+.emu-bar{background:var(--surface2);padding:.5rem 1rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid var(--border)}
+.emu-dot{width:10px;height:10px;border-radius:50%}
+.emu-title{font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim);margin:0 auto;letter-spacing:1px}
+.emu-body{padding:1rem 1.2rem;font-family:var(--font-mono);font-size:.78rem;line-height:1.9;color:#4a7a55}
+.epass{color:var(--accent)}.efail{color:var(--accent2)}.eprompt{color:var(--accent3)}.ecmt{color:var(--text-dim)}
+/* PHOTO FRAME */
+.photo-frame{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+.photo-frame img{width:100%;height:auto;display:block;filter:brightness(.92) contrast(1.08)}
+.photo-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 25%,transparent 75%,rgba(0,0,0,.55) 100%);pointer-events:none}
+.photo-badge{position:absolute;top:.8rem;left:.8rem;font-family:var(--font-mono);font-size:.62rem;letter-spacing:2px;color:var(--accent2);background:rgba(3,8,12,.85);border:1px solid var(--accent2);padding:3px 8px;border-radius:2px}
+.photo-ts{position:absolute;bottom:.8rem;right:.8rem;font-family:var(--font-mono);font-size:.6rem;color:rgba(0,232,200,.65);background:rgba(3,8,12,.75);padding:3px 8px}
+/* EXIF VIEWER */
+.exif-viewer{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+.ev-header{background:var(--surface);padding:.7rem 1.2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.ev-title{font-family:var(--font-mono);font-size:.7rem;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase}
+.ev-badge{font-family:var(--font-mono);font-size:.62rem;color:var(--accent);border:1px solid rgba(0,232,200,.3);padding:2px 7px;border-radius:20px}
+.ev-row{display:grid;grid-template-columns:50px 160px 1fr;border-bottom:1px solid rgba(22,64,96,.35);transition:background var(--transition)}
+@media(max-width:540px){.ev-row{grid-template-columns:1fr;border-bottom:2px solid var(--border)}}
+.ev-row:last-child{border-bottom:none}
+.ev-row:hover{background:rgba(0,232,200,.025)}
+.ev-cell{padding:.5rem .8rem;font-family:var(--font-mono);font-size:.74rem}
+.ev-id{color:var(--text-dim);font-size:.65rem}
+.ev-field{color:#7dd3fc}
+.ev-value{color:var(--accent3);word-break:break-all}
+.ev-value.flag-hint{color:var(--surface2);background:var(--surface2);border-radius:2px;cursor:pointer;user-select:none;transition:all .4s}
+.ev-value.flag-hint:hover{color:var(--accent2);background:transparent}
+.ev-row.flag-row{background:rgba(255,45,107,.04);border-left:2px solid var(--accent2)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="#"><span class="bracket">[</span><span class="brand-flag">⚑</span>FLAG<span style="color:var(--accent)">VAULT</span><span class="bracket">]</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#" class="active">Challenges</a></li>
+    <li><a href="#">Scoreboard</a></li>
+    <li><a href="#">Tools</a></li>
+    <li><a href="#">Rules</a></li>
+  </ul>
+  <div class="nav-status"><span class="status-dot"></span><span>CTF LIVE</span></div>
+</nav>
+
+<div class="page-wrap">
+  <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim);margin-bottom:2rem;display:flex;align-items:center;gap:.5rem">
+    <a href="#" style="color:var(--text-dim)">challenges</a><span>/</span>
+    <a href="#" style="color:var(--text-dim)">forensics</a><span>/</span>
+    <span style="color:var(--accent)">scene-of-the-crime</span>
+  </div>
+
+  <div class="page-header" data-index="FOR">
+    <div class="page-eyebrow">🔍 Forensics / OSINT · Challenge #03</div>
+    <h1 class="page-title">Scene of the <span class="hl2">Crime</span></h1>
+    <p class="page-desc">A photo was taken at the scene. The photographer was careless — they left too much metadata behind. The flag is hiding in the image itself.</p>
+  </div>
+
+  <div class="layout-2col">
+    <div>
+
+      <div class="sec-divider"><h3>Description</h3></div>
+      <div class="desc-block">
+        <p>Every digital photograph carries <span class="hl">EXIF metadata</span> — hidden data embedded by the camera at the moment the shot was taken. This includes camera model, software, timestamp, GPS coordinates, and free-text fields like <strong style="color:var(--accent2)">Artist</strong> and <strong style="color:var(--accent2)">Copyright</strong>.</p>
+        <p>An operative photographed a restricted scene and uploaded the evidence file without <span class="hl2">stripping the metadata</span> first. Their operator ID was left embedded in one of the EXIF text fields.</p>
+        <p><span class="hl3">Download the image. Extract its EXIF data. Find the field that contains the flag. No steganography — just metadata readable with any EXIF tool.</span></p>
+      </div>
+
+      <div class="sec-divider"><h3>Evidence Photograph</h3></div>
+      <div class="photo-frame">
+        <img src="files/scene.jpg" alt="Evidence photograph — Crime Scene Sector 7" loading="lazy"/>
+        <div class="photo-overlay"></div>
+        <div class="photo-badge">⚠ EVIDENCE #4471-B [RESTRICTED]</div>
+        <div class="photo-ts">2024:11:23 03:47:12</div>
+      </div>
+
+      <div class="sec-divider"><h3>EXIF Fields Detected</h3></div>
+      <div class="exif-viewer">
+        <div class="ev-header">
+          <span class="ev-title">scene.jpg — Metadata Dump</span>
+          <span class="ev-badge">8 fields</span>
+        </div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x010e</div><div class="ev-cell ev-field">ImageDescription</div><div class="ev-cell ev-value">Crime Scene Photograph - Sector 7 - Night Patrol</div></div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x010f</div><div class="ev-cell ev-field">Make</div><div class="ev-cell ev-value">FLAGVAULT-CAM-X9</div></div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x0110</div><div class="ev-cell ev-field">Model</div><div class="ev-cell ev-value">Surveillance Unit - Model 3</div></div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x0131</div><div class="ev-cell ev-field">Software</div><div class="ev-cell ev-value">FlagVault Evidence Suite v2.1</div></div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x0132</div><div class="ev-cell ev-field">DateTime</div><div class="ev-cell ev-value">2024:11:23 03:47:12</div></div>
+        <div class="ev-row flag-row">
+          <div class="ev-cell ev-id" style="color:var(--accent2)">0x013b</div>
+          <div class="ev-cell ev-field" style="color:var(--accent2);font-weight:bold">Artist ← look here</div>
+          <div class="ev-cell ev-value flag-hint" title="Hover to peek (or just use exiftool!)">FlagVault{3x1f_d4t4_l34ks_s3cr3ts}</div>
+        </div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x8298</div><div class="ev-cell ev-field">Copyright</div><div class="ev-cell ev-value">CLASSIFIED // FlagVault Ops Division 2024</div></div>
+        <div class="ev-row"><div class="ev-cell ev-id">0x9286</div><div class="ev-cell ev-field">UserComment</div><div class="ev-cell ev-value">Uploaded from field unit. Do not distribute...</div></div>
+      </div>
+      <p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);margin-bottom:1.5rem">
+        ☝ The highlighted row is what you need. Download the image and read it with an EXIF tool to get the real flag value.
+      </p>
+
+      <div class="sec-divider"><h3>Extraction Methods</h3></div>
+      <div class="terminal-emu">
+        <div class="emu-bar">
+          <div class="emu-dot" style="background:#ff5f56"></div>
+          <div class="emu-dot" style="background:#ffbd2e"></div>
+          <div class="emu-dot" style="background:#27c93f"></div>
+          <div class="emu-title">Method 1 — exiftool</div>
+        </div>
+        <div class="emu-body">
+          <span class="eprompt">$ exiftool scene.jpg</span><br>
+          <span class="ecmt">File Name                       : scene.jpg</span><br>
+          <span class="ecmt">Image Description               : Crime Scene Photograph - Sector 7...</span><br>
+          <span class="ecmt">Make                            : FLAGVAULT-CAM-X9</span><br>
+          <span class="ecmt">DateTime                        : 2024:11:23 03:47:12</span><br>
+          <span class="epass">Artist                          : FlagVault{3x1f_d4t4_l34ks_s3cr3ts}</span><br>
+          <span class="ecmt">Copyright                       : CLASSIFIED // FlagVault Ops Division 2024</span><br><br>
+          <span class="eprompt">$ exiftool -Artist scene.jpg</span><br>
+          <span class="epass">Artist                          : FlagVault{3x1f_d4t4_l34ks_s3cr3ts}</span>
+        </div>
+      </div>
+      <div class="terminal-emu">
+        <div class="emu-bar">
+          <div class="emu-dot" style="background:#ff5f56"></div>
+          <div class="emu-dot" style="background:#ffbd2e"></div>
+          <div class="emu-dot" style="background:#27c93f"></div>
+          <div class="emu-title">Method 2 — Python / Pillow</div>
+        </div>
+        <div class="emu-body">
+          <span class="ecmt">>>> from PIL import Image, ExifTags</span><br>
+          <span class="ecmt">>>> img = Image.open("scene.jpg")</span><br>
+          <span class="ecmt">>>> exif = img.getexif()</span><br>
+          <span class="ecmt">>>> print(exif[315])   # 315 = Artist tag</span><br>
+          <span class="epass">FlagVault{3x1f_d4t4_l34ks_s3cr3ts}</span>
+        </div>
+      </div>
+      <div class="terminal-emu">
+        <div class="emu-bar">
+          <div class="emu-dot" style="background:#ff5f56"></div>
+          <div class="emu-dot" style="background:#ffbd2e"></div>
+          <div class="emu-dot" style="background:#27c93f"></div>
+          <div class="emu-title">Method 3 — strings (quickest)</div>
+        </div>
+        <div class="emu-body">
+          <span class="eprompt">$ strings scene.jpg | grep FlagVault{</span><br>
+          <span class="epass">FlagVault{3x1f_d4t4_l34ks_s3cr3ts}</span>
+        </div>
+      </div>
+
+      <div class="sec-divider"><h3>Download</h3></div>
+      <a class="dl-btn" href="files/scene.jpg" download="scene.jpg">
+        <span class="dl-icon">📷</span>
+        <span>
+          <span class="dl-name">scene.jpg</span>
+          <span class="dl-size">JPEG · EXIF embedded · ~19 KB · Evidence #4471-B</span>
+        </span>
+        <span class="dl-arrow">→</span>
+      </a>
+
+      <div class="sec-divider"><h3>Hints</h3></div>
+      <div class="hints-container">
+        <div class="hint-item" id="h1">
+          <button class="hint-toggle" onclick="revealHint('h1')">
+            <span class="hint-num">HINT 01</span>
+            No tools installed — easiest online method?
+            <span class="hint-cost">-25 pts</span>
+          </button>
+          <div class="hint-content">
+            Go to <strong style="color:var(--accent)">exif.tools</strong> in your browser — drag and drop the image. Scroll to the <strong style="color:var(--accent2)">Artist</strong> field in the output. No installation required.
+          </div>
+        </div>
+        <div class="hint-item" id="h2">
+          <button class="hint-toggle" onclick="revealHint('h2')">
+            <span class="hint-num">HINT 02</span>
+            How do I install exiftool?
+            <span class="hint-cost">-25 pts</span>
+          </button>
+          <div class="hint-content">
+            <strong style="color:var(--accent)">Linux:</strong> <code style="background:transparent;border:none">sudo apt install libimage-exiftool-perl</code><br>
+            <strong style="color:var(--accent)">macOS:</strong> <code style="background:transparent;border:none">brew install exiftool</code><br>
+            <strong style="color:var(--accent)">Windows:</strong> Download standalone exe from <code style="background:transparent;border:none">exiftool.org</code><br><br>
+            Run: <code style="background:transparent;border:none;color:var(--accent)">exiftool scene.jpg</code>
+          </div>
+        </div>
+        <div class="hint-item" id="h3">
+          <button class="hint-toggle" onclick="revealHint('h3')">
+            <span class="hint-num">HINT 03</span>
+            Which EXIF field specifically contains the flag?
+            <span class="hint-cost">-75 pts</span>
+          </button>
+          <div class="hint-content">
+            The <strong style="color:var(--accent2)">Artist</strong> field (EXIF tag <code style="background:transparent;border:none">0x013B</code> — decimal 315).<br><br>
+            Direct extraction: <code style="background:transparent;border:none;color:var(--accent)">exiftool -Artist scene.jpg</code><br>
+            Python: <code style="background:transparent;border:none;color:var(--accent)">img.getexif()[315]</code>
+          </div>
+        </div>
+        <div class="hint-item" id="h4">
+          <button class="hint-toggle" onclick="revealHint('h4')">
+            <span class="hint-num">HINT 04</span>
+            Fastest one-liner solve
+            <span class="hint-cost">-50 pts</span>
+          </button>
+          <div class="hint-content">
+            <code style="background:transparent;border:none;color:var(--accent)">strings scene.jpg | grep "FlagVault{"</code><br><br>
+            The flag is plain ASCII in the EXIF data — <code style="background:transparent;border:none">strings</code> extracts it directly without any EXIF parser.
+          </div>
+        </div>
+      </div>
+
+      <div class="flag-format">
+        <span class="flag-icon">⚑</span>
+        <span>Flag format: <strong>FlagVault{your_flag_here}</strong></span>
+      </div>
+
+      <div class="submit-section">
+        <div class="submit-title">Submit Your Flag</div>
+        <p class="submit-sub">Extract the EXIF metadata from scene.jpg. The flag is in the Artist field.</p>
+        <div class="flag-input-wrap">
+          <span class="prefix">FlagVault{</span>
+          <input class="form-control" id="flagInput" type="text" placeholder="your_flag_here}" autocomplete="off" spellcheck="false"/>
+        </div>
+        <div class="flag-submit-row">
+          <button class="btn btn-primary" onclick="submitFlag()">⚑ &nbsp;Submit Flag</button>
+          <button class="btn btn-danger"  onclick="clearFlag()">✕ &nbsp;Clear</button>
+        </div>
+        <div class="solved-banner" id="solvedBanner">
+          <span class="sb-icon">🏆</span>
+          <div>
+            <div style="font-weight:bold;margin-bottom:.2rem;color:var(--accent)">CORRECT — Metadata Extracted!</div>
+            <div style="font-size:.72rem;color:var(--text-dim)">You found the flag in the EXIF Artist field. Always strip metadata before sharing images.</div>
+          </div>
+          <span class="sb-pts">+250 pts</span>
+        </div>
+        <div class="submit-result" id="wrongBanner">
+          ✕ &nbsp;Incorrect. Download the image and check the EXIF <strong>Artist</strong> field (tag 0x013b).
+        </div>
+      </div>
+
+    </div><!-- /main -->
+
+    <aside class="sidebar">
+
+      <div class="side-card">
+        <div class="side-card-title">// Challenge Info</div>
+        <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val"><span class="tag tag-green">Forensics</span></span></div>
+        <div class="meta-row"><span class="meta-key">Sub-type</span><span class="meta-val"><span class="tag tag-amber">OSINT / EXIF</span></span></div>
+        <div class="meta-row"><span class="meta-key">Difficulty</span><span class="meta-val"><span class="tag tag-green">Easy</span></span></div>
+        <div class="meta-row"><span class="meta-key">Points</span><span class="meta-val amber" style="color:var(--accent3)">250 pts</span></div>
+        <div class="meta-row"><span class="meta-key">File</span><span class="meta-val"><code style="font-size:.7rem">scene.jpg</code></span></div>
+        <div class="meta-row"><span class="meta-key">Author</span><span class="meta-val green">FlagVault Team</span></div>
+        <div class="meta-row"><span class="meta-key">Solves</span><span class="meta-val green" id="solveCount">89</span></div>
+        <div class="solve-bar-wrap">
+          <div class="solve-bar-label"><span>Solve Rate</span><span id="solveRate">89 / 120</span></div>
+          <div class="solve-bar"><div class="solve-bar-fill" id="solveFill"></div></div>
+        </div>
+      </div>
+
+      <div class="side-card" style="border-left:3px solid var(--accent)">
+        <div class="side-card-title">// What is EXIF?</div>
+        <p style="font-family:var(--font-mono);font-size:.73rem;color:var(--text-dim);line-height:1.75">
+          <strong style="color:var(--accent)">EXIF</strong> (Exchangeable Image File Format) metadata is automatically embedded in JPEG/TIFF images by cameras and phones.<br><br>
+          It contains camera model, timestamps, GPS, settings, and <strong style="color:var(--accent2)">free-text fields</strong> like Artist, Copyright, and Description — which can contain anything.
+        </p>
+      </div>
+
+      <div class="side-card">
+        <div class="side-card-title">// Tools</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div class="tool-card" style="--tool-color:var(--accent)">
+            <span class="tool-icon">🔧</span>
+            <div class="tool-name">exiftool</div>
+            <span class="tool-tag">CLI · all platforms</span>
+            <p class="tool-desc">Gold standard. <code style="background:transparent;border:none;font-size:.7rem">exiftool scene.jpg</code> dumps everything.</p>
+          </div>
+          <div class="tool-card" style="--tool-color:var(--accent3)">
+            <span class="tool-icon">🌐</span>
+            <div class="tool-name">exif.tools</div>
+            <span class="tool-tag">online · no install</span>
+            <p class="tool-desc">Browser-based viewer. Upload the file, see all fields instantly.</p>
+          </div>
+          <div class="tool-card" style="--tool-color:var(--accent2)">
+            <span class="tool-icon">🐍</span>
+            <div class="tool-name">Python / Pillow</div>
+            <span class="tool-tag">scripting</span>
+            <p class="tool-desc"><code style="background:transparent;border:none;font-size:.7rem">img.getexif()[315]</code> — direct field access.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <div class="side-card-title">// Key EXIF Tags</div>
+        <table style="width:100%;font-family:var(--font-mono);font-size:.7rem;border-collapse:collapse">
+          <tr><td style="color:var(--text-dim);padding:.3rem .2rem;border-bottom:1px solid rgba(22,64,96,.3)">0x010e</td><td style="color:#7dd3fc;padding:.3rem .4rem;border-bottom:1px solid rgba(22,64,96,.3)">ImageDescription</td></tr>
+          <tr><td style="color:var(--text-dim);padding:.3rem .2rem;border-bottom:1px solid rgba(22,64,96,.3)">0x010f</td><td style="color:#7dd3fc;padding:.3rem .4rem;border-bottom:1px solid rgba(22,64,96,.3)">Make</td></tr>
+          <tr><td style="color:var(--text-dim);padding:.3rem .2rem;border-bottom:1px solid rgba(22,64,96,.3)">0x0110</td><td style="color:#7dd3fc;padding:.3rem .4rem;border-bottom:1px solid rgba(22,64,96,.3)">Model</td></tr>
+          <tr><td style="color:var(--text-dim);padding:.3rem .2rem;border-bottom:1px solid rgba(22,64,96,.3)">0x0132</td><td style="color:#7dd3fc;padding:.3rem .4rem;border-bottom:1px solid rgba(22,64,96,.3)">DateTime</td></tr>
+          <tr style="background:rgba(255,45,107,.06)">
+            <td style="color:var(--accent2);padding:.3rem .2rem;border-bottom:1px solid rgba(22,64,96,.3);font-weight:bold">0x013b</td>
+            <td style="color:var(--accent2);padding:.3rem .4rem;border-bottom:1px solid rgba(22,64,96,.3);font-weight:bold">Artist ← FLAG HERE</td>
+          </tr>
+          <tr><td style="color:var(--text-dim);padding:.3rem .2rem;border-bottom:1px solid rgba(22,64,96,.3)">0x8298</td><td style="color:#7dd3fc;padding:.3rem .4rem;border-bottom:1px solid rgba(22,64,96,.3)">Copyright</td></tr>
+          <tr><td style="color:var(--text-dim);padding:.3rem .2rem">0x8825</td><td style="color:#7dd3fc;padding:.3rem .4rem">GPSInfo</td></tr>
+        </table>
+      </div>
+
+      <div class="side-card">
+        <div class="side-card-title">// Recent Solvers</div>
+        <div id="solverList"></div>
+      </div>
+
+      <div class="side-card" style="border-left:3px solid var(--accent2)">
+        <div class="side-card-title">// Flag Format</div>
+        <code style="display:block;font-size:.78rem;word-break:break-all">FlagVault{your_flag_here}</code>
+        <p style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);margin-top:.6rem">Copy the exact value from the EXIF Artist field in scene.jpg.</p>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-brand">FLAG<span>VAULT</span> CTF</div>
+  <div class="footer-copy">Scene of the Crime &nbsp;·&nbsp; Forensics / OSINT &nbsp;·&nbsp; 250 pts</div>
+</footer>
+
+<script>
+/* FlagVault CTF — Scene of the Crime
+   Flag: FlagVault{3x1f_d4t4_l34ks_s3cr3ts}
+   Array XOR 0x4E — verified */
+const _fe=[8,34,47,41,24,47,59,34,58,53,125,54,127,40,17,42,122,58,122,17,34,125,122,37,61,17,61,125,45,60,125,58,61,51];
+function _flag(){return _fe.map(b=>String.fromCharCode(b^0x4E)).join('');}
+
+function revealHint(id){const el=document.getElementById(id);if(el)el.classList.toggle('revealed');}
+
+function submitFlag(){
+  const inp=document.getElementById('flagInput');
+  const ok=document.getElementById('solvedBanner');
+  const bad=document.getElementById('wrongBanner');
+  if(!inp)return;
+  let raw=inp.value.trim();
+  let sub=raw.startsWith('FlagVault{')?raw:raw.startsWith('{')?'FlagVault'+raw:'FlagVault{'+raw;
+  ok.classList.remove('show');bad.style.display='none';bad.className='submit-result';
+  if(sub===_flag()){
+    ok.classList.add('show');
+    inp.style.borderColor='var(--accent)';inp.style.boxShadow='0 0 0 2px rgba(0,232,200,.2)';
+    document.body.style.transition='background .15s';document.body.style.background='#001a10';
+    setTimeout(()=>{document.body.style.background='';},300);_inc();
+  }else{
+    bad.style.display='block';bad.classList.add('incorrect');
+    inp.style.borderColor='var(--accent2)';inp.style.boxShadow='0 0 0 2px rgba(255,45,107,.2)';
+    inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),500);
+  }
+}
+function clearFlag(){
+  const inp=document.getElementById('flagInput');
+  const ok=document.getElementById('solvedBanner');
+  const bad=document.getElementById('wrongBanner');
+  if(inp){inp.value='';inp.style.borderColor='';inp.style.boxShadow='';}
+  if(ok)ok.classList.remove('show');
+  if(bad){bad.style.display='none';bad.className='submit-result';}
+}
+function _inc(){
+  const el=document.getElementById('solveCount');
+  const r=document.getElementById('solveRate');
+  const f=document.getElementById('solveFill');
+  if(!el)return;const n=parseInt(el.textContent,10)+1;
+  el.textContent=n;if(r)r.textContent=n+' / 120';
+  if(f)f.style.width=((n/120)*100).toFixed(1)+'%';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp=document.getElementById('flagInput');
+  if(inp){
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')submitFlag();});
+    inp.addEventListener('input',()=>{inp.style.borderColor='';inp.style.boxShadow='';});
+  }
+  setTimeout(()=>{const f=document.getElementById('solveFill');if(f)f.style.width='74%';},500);
+  const sl=document.getElementById('solverList');
+  if(sl)sl.innerHTML=[
+    {n:'exif_hunter_01',t:'30m ago'},{n:'metadata_mage',t:'1h ago'},
+    {n:'strings_grep',t:'2h ago'},{n:'pillow_power',t:'3h ago'},
+    {n:'osint_rookie',t:'4h ago'}
+  ].map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:.72rem;padding:.4rem 0;border-bottom:1px solid rgba(22,64,96,.4)"><span style="color:var(--text-hi)">🔓 ${s.n}</span><span style="color:var(--text-dim)">${s.t}</span></div>`).join('');
+});
+</script>
+</body>
+</html>
