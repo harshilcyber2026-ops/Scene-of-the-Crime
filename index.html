@@ -159,13 +159,6 @@ code,.mono{font-family:var(--font-mono);background:rgba(0,232,200,0.06);border:1
 
 <nav class="nav">
   <a class="nav-brand" href="#"><span class="bracket">[</span><span class="brand-flag">⚑</span>FLAG<span style="color:var(--accent)">VAULT</span><span class="bracket">]</span></a>
-  <ul class="nav-links">
-    <li><a href="#">Home</a></li>
-    <li><a href="#" class="active">Challenges</a></li>
-    <li><a href="#">Scoreboard</a></li>
-    <li><a href="#">Tools</a></li>
-    <li><a href="#">Rules</a></li>
-  </ul>
   <div class="nav-status"><span class="status-dot"></span><span>CTF LIVE</span></div>
 </nav>
 
@@ -210,7 +203,6 @@ code,.mono{font-family:var(--font-mono);background:rgba(0,232,200,0.06);border:1
         <div class="ev-row"><div class="ev-cell ev-id">0x010f</div><div class="ev-cell ev-field">Make</div><div class="ev-cell ev-value">FLAGVAULT-CAM-X9</div></div>
         <div class="ev-row"><div class="ev-cell ev-id">0x0110</div><div class="ev-cell ev-field">Model</div><div class="ev-cell ev-value">Surveillance Unit - Model 3</div></div>
         <div class="ev-row"><div class="ev-cell ev-id">0x0131</div><div class="ev-cell ev-field">Software</div><div class="ev-cell ev-value">FlagVault Evidence Suite v2.1</div></div>
-        <div class="ev-row"><div class="ev-cell ev-id">0x0132</div><div class="ev-cell ev-field">DateTime</div><div class="ev-cell ev-value">2024:11:23 03:47:12</div></div>
         <div class="ev-row flag-row">
           <div class="ev-cell ev-id" style="color:var(--accent2)">0x013b</div>
           <div class="ev-cell ev-field" style="color:var(--accent2);font-weight:bold">Artist ← look here</div>
@@ -281,79 +273,13 @@ code,.mono{font-family:var(--font-mono);background:rgba(0,232,200,0.06);border:1
         <span class="dl-arrow">→</span>
       </a>
 
-      <div class="sec-divider"><h3>Hints</h3></div>
-      <div class="hints-container">
-        <div class="hint-item" id="h1">
-          <button class="hint-toggle" onclick="revealHint('h1')">
-            <span class="hint-num">HINT 01</span>
-            No tools installed — easiest online method?
-            <span class="hint-cost">-25 pts</span>
-          </button>
-          <div class="hint-content">
-            Go to <strong style="color:var(--accent)">exif.tools</strong> in your browser — drag and drop the image. Scroll to the <strong style="color:var(--accent2)">Artist</strong> field in the output. No installation required.
-          </div>
-        </div>
-        <div class="hint-item" id="h2">
-          <button class="hint-toggle" onclick="revealHint('h2')">
-            <span class="hint-num">HINT 02</span>
-            How do I install exiftool?
-            <span class="hint-cost">-25 pts</span>
-          </button>
-          <div class="hint-content">
-            <strong style="color:var(--accent)">Linux:</strong> <code style="background:transparent;border:none">sudo apt install libimage-exiftool-perl</code><br>
-            <strong style="color:var(--accent)">macOS:</strong> <code style="background:transparent;border:none">brew install exiftool</code><br>
-            <strong style="color:var(--accent)">Windows:</strong> Download standalone exe from <code style="background:transparent;border:none">exiftool.org</code><br><br>
-            Run: <code style="background:transparent;border:none;color:var(--accent)">exiftool scene.jpg</code>
-          </div>
-        </div>
-        <div class="hint-item" id="h3">
-          <button class="hint-toggle" onclick="revealHint('h3')">
-            <span class="hint-num">HINT 03</span>
-            Which EXIF field specifically contains the flag?
-            <span class="hint-cost">-75 pts</span>
-          </button>
-          <div class="hint-content">
-            The <strong style="color:var(--accent2)">Artist</strong> field (EXIF tag <code style="background:transparent;border:none">0x013B</code> — decimal 315).<br><br>
-            Direct extraction: <code style="background:transparent;border:none;color:var(--accent)">exiftool -Artist scene.jpg</code><br>
-            Python: <code style="background:transparent;border:none;color:var(--accent)">img.getexif()[315]</code>
-          </div>
-        </div>
-        <div class="hint-item" id="h4">
-          <button class="hint-toggle" onclick="revealHint('h4')">
-            <span class="hint-num">HINT 04</span>
-            Fastest one-liner solve
-            <span class="hint-cost">-50 pts</span>
-          </button>
-          <div class="hint-content">
-            <code style="background:transparent;border:none;color:var(--accent)">strings scene.jpg | grep "FlagVault{"</code><br><br>
-            The flag is plain ASCII in the EXIF data — <code style="background:transparent;border:none">strings</code> extracts it directly without any EXIF parser.
-          </div>
-        </div>
-      </div>
-
-      <div class="flag-format">
-        <span class="flag-icon">⚑</span>
-        <span>Flag format: <strong>FlagVault{your_flag_here}</strong></span>
-      </div>
-
-      <div class="submit-section">
-        <div class="submit-title">Submit Your Flag</div>
-        <p class="submit-sub">Extract the EXIF metadata from scene.jpg. The flag is in the Artist field.</p>
-        <div class="flag-input-wrap">
-          <span class="prefix">FlagVault{</span>
-          <input class="form-control" id="flagInput" type="text" placeholder="your_flag_here}" autocomplete="off" spellcheck="false"/>
-        </div>
-        <div class="flag-submit-row">
-          <button class="btn btn-primary" onclick="submitFlag()">⚑ &nbsp;Submit Flag</button>
-          <button class="btn btn-danger"  onclick="clearFlag()">✕ &nbsp;Clear</button>
-        </div>
+     
         <div class="solved-banner" id="solvedBanner">
           <span class="sb-icon">🏆</span>
           <div>
             <div style="font-weight:bold;margin-bottom:.2rem;color:var(--accent)">CORRECT — Metadata Extracted!</div>
             <div style="font-size:.72rem;color:var(--text-dim)">You found the flag in the EXIF Artist field. Always strip metadata before sharing images.</div>
           </div>
-          <span class="sb-pts">+250 pts</span>
         </div>
         <div class="submit-result" id="wrongBanner">
           ✕ &nbsp;Incorrect. Download the image and check the EXIF <strong>Artist</strong> field (tag 0x013b).
@@ -369,10 +295,8 @@ code,.mono{font-family:var(--font-mono);background:rgba(0,232,200,0.06);border:1
         <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val"><span class="tag tag-green">Forensics</span></span></div>
         <div class="meta-row"><span class="meta-key">Sub-type</span><span class="meta-val"><span class="tag tag-amber">OSINT / EXIF</span></span></div>
         <div class="meta-row"><span class="meta-key">Difficulty</span><span class="meta-val"><span class="tag tag-green">Easy</span></span></div>
-        <div class="meta-row"><span class="meta-key">Points</span><span class="meta-val amber" style="color:var(--accent3)">250 pts</span></div>
         <div class="meta-row"><span class="meta-key">File</span><span class="meta-val"><code style="font-size:.7rem">scene.jpg</code></span></div>
         <div class="meta-row"><span class="meta-key">Author</span><span class="meta-val green">FlagVault Team</span></div>
-        <div class="meta-row"><span class="meta-key">Solves</span><span class="meta-val green" id="solveCount">89</span></div>
         <div class="solve-bar-wrap">
           <div class="solve-bar-label"><span>Solve Rate</span><span id="solveRate">89 / 120</span></div>
           <div class="solve-bar"><div class="solve-bar-fill" id="solveFill"></div></div>
